@@ -1,0 +1,17 @@
+---
+- hosts: "{{node}}"
+  user: ec2-user
+  become: yes
+  tasks:
+
+  name: Stop running container
+  shell: >
+    sudo docker stop $(sudo docker ps -a -q)
+
+  name: Update docker images
+  shell: >
+    sudo docker pull registry.gitlab.com/bablzz/devops-test-task
+
+  name: Starting docker container
+  shell: >
+    sudo docker run -d -p 9007:9007 registry.gitlab.com/bablzz/devops-test-task

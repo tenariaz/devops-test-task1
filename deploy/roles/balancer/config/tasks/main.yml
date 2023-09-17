@@ -1,0 +1,11 @@
+---
+- name: get ec2 facts
+  ec2_facts:
+
+- name: Setting balancer
+  copy: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf force=yes
+
+- name: Setting webpage
+  template: src=templates/nginx_page.conf.j2 dest=/etc/nginx/nginx.conf force=yes
+  delegate_to: "{{item}}"
+  with_items: "{{groups['ec2webpage']}}"

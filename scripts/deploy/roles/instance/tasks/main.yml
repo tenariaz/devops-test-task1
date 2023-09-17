@@ -1,0 +1,27 @@
+---
+- name: request instance for "{{ec2invgroup}}"
+  ec2:
+    ec2_access_key: "{{ec2_access_key}}"
+    ec2_secret_key: "{{ec2_secret_key}}"
+    keypair: "{{ec2key}}"
+    instance_type: "{{ec2type}}"
+    image: "{{ec2image}}"
+    wait: true
+    group_id: "{{ec2secg}}"
+    ec2_url: "{{ec2url}}"
+  register: ec2instances
+
+- debug: msg="{{ec2instances}}"
+
+- name: add host "{{ec2invgroup}}"
+  add_host:
+    hostname: "{{item.public_ip}}"
+    groupname: "{{ec2invgroup}}"
+  with_items: "{{ec2instances.instances}}"
+
+- name: wait for ssh port
+  wait_for:
+    state: started
+    host: "{{item.public_ip}}"
+    port: 22
+  with_items: "{{ec2instances.instances}}"

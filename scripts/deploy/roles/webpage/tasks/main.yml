@@ -1,0 +1,11 @@
+---
+- name: get ec2 facts
+  ec2_facts:
+
+- debug: msg="{{ansible_ec2_public_ipv4}}"
+
+- name: Download html
+  copy: src=files/index.html dest=/usr/share/nginx/html/ force=yes
+
+- name: Nginx service is up at webpage
+  service: name=nginx state=started

@@ -1,0 +1,109 @@
+---
+- name: Request cloud instance for balancer
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - { role: instance,
+        ec2secg: sg-66cf600e, ec2url: "https://ec2.us-east-2.amazonaws.com",
+        ec2image: ami-ea87a78f, ec2type: "t2.micro",
+        ec2key: ansible_aws_ohi, ec2invgroup: "ec2balancer"
+      }
+
+- name: Request cloud instance for app1
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - { role: instance,
+        ec2secg: sg-04309077, ec2url: "https://ec2.us-east-1.amazonaws.com",
+        ec2image: ami-4fffc834, ec2type: "t2.micro",
+        ec2key: ansible_aws_vir, ec2invgroup: "ec2node1"
+      }
+
+- name: Request cloud instance for app2
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - { role: instance,
+        ec2secg: sg-04309077, ec2url: "https://ec2.us-east-1.amazonaws.com",
+        ec2image: ami-4fffc834, ec2type: "t2.micro",
+        ec2key: ansible_aws_vir, ec2invgroup: "ec2node2"
+      }
+
+- name: Request cloud instance for webpage
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - { role: instance,
+        ec2secg: sg-66cf600e, ec2url: "https://ec2.us-east-2.amazonaws.com",
+        ec2image: ami-ea87a78f, ec2type: "t2.micro",
+        ec2key: ansible_aws_ohi, ec2invgroup: "ec2webpage"
+      }
+
+- name: Request cloud instance for monitoring
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - { role: instance,
+        ec2secg: sg-66cf600e, ec2url: "https://ec2.us-east-2.amazonaws.com",
+        ec2image: ami-ea87a78f, ec2type: "t2.micro",
+        ec2key: ansible_aws_ohi, ec2invgroup: "ec2monitoring"
+      }
+
+- name: Install software
+  hosts: ec2balancer:ec2node1:ec2node2:ec2webpage:ec2monitoring
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: software  }
+
+- name: Configure balancer
+  hosts: ec2balancer
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: balancer/config }
+
+- name: Install app
+  hosts: ec2node1
+  gather_facts: yes
+  user: ec2-user
+  bcome: true
+  roles:
+    - { role: node, app_name: app1 }
+
+- name: Install app
+  hosts: ec2node2
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: node, app_name: app2  }
+
+- name: Install webpage
+  hosts: ec2webpage
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: webpage  }
+
+- name: Start balancer
+  hosts: ec2balancer
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: balancer/start }
+
+- name: Start balancer
+  hosts: ec2monitoring
+  gather_facts: yes
+  user: ec2-user
+  become: true
+  roles:
+    - { role: monitoring }
+#TODO zabbix в конейнере https://www.zabbix.com/documentation/3.2/ru/manual/installation/containers.
+# Облом с zabbix в докере https://github.com/zabbix/zabbix-docker/issues/139
+# для hdd и agedu сойдет
