@@ -1,0 +1,26 @@
+[localhost]
+localhost ansible_connection=local
+
+[ec2webpage]
+
+[ec2webpage:vars]
+ansible_ssh_private_key_file=/key/ansible_aws_oregon.pem
+
+[ec2balancer]
+
+[ec2balancer:vars]
+ansible_ssh_private_key_file=/key/ansible_aws_ohi.pem
+
+[ec2node1]
+
+[ec2node1:vars]
+ansible_ssh_private_key_file=/key/ansible_aws_vir.pem
+
+[ec2node2]
+
+[ec2node2:vars]
+ansible_ssh_private_key_file=/key/ansible_aws_vir.pem
+
+[ec2monitoring]
+
+[ec2webpage]

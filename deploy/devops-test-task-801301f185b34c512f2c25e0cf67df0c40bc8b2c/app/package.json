@@ -1,0 +1,19 @@
+{
+  "name": "api-server",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "description": "Multifunctional API server app",
+  "author": "Aleksey Gavrilov <me@prog.pw>",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:prog13/devops-test-task.git"
+  },
+  "scripts": {
+    "start": "pm2 start --env production --no-daemon process.json"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "pm2": "^2.5.0"
+  }
+}

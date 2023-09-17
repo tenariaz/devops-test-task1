@@ -1,0 +1,14 @@
+---
+- name: install software
+  yum: name={{item}} state=present
+  with_items:
+    - nginx
+    - python-pip
+    - python-devel
+
+- name: install pip latest
+  pip:
+    name: pip
+    state: latest
+    extra_args: --user
+  become: false
